@@ -1,4 +1,4 @@
-package com.example.edutrack.ui.theme
+package com.edutrack.ui.theme
 
 import android.app.Activity
 import android.os.Build

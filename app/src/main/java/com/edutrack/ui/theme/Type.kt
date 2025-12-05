@@ -1,4 +1,4 @@
-package com.example.edutrack.ui.theme
+package com.edutrack.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
