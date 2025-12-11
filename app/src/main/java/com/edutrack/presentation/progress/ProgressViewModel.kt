@@ -6,7 +6,7 @@ import com.edutrack.domain.models.Subject
 import com.edutrack.domain.models.User
 import com.edutrack.domain.usecases.GetProgressUseCase
 import com.edutrack.domain.usecases.GetUserUseCase
-import com.edutrack.domain.usecases.LoginUseCase
+import com.edutrack.domain.usecases.LogoutUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -18,7 +18,7 @@ import javax.inject.Inject
 class ProgressViewModel @Inject constructor(
     private val getUserUseCase: GetUserUseCase,
     private val getProgressUseCase: GetProgressUseCase,
-    private val logoutUseCase: LoginUseCase
+    private val logoutUseCase: LogoutUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ProgressUiState())
@@ -62,6 +62,12 @@ class ProgressViewModel @Inject constructor(
 
     fun clearError() {
         _uiState.value = _uiState.value.copy(error = null)
+    }
+
+    fun logout() {
+        viewModelScope.launch {
+            logoutUseCase.invoke()
+        }
     }
 }
 

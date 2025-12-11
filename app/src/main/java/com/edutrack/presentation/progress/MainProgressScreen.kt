@@ -18,6 +18,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.edutrack.presentation.components.OverallProgressCard
 import com.edutrack.presentation.components.SubjectCard
+import com.edutrack.presentation.navigation.Screen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -32,6 +33,8 @@ fun MainProgressScreen(
         viewModel.loadData(token)
     }
 
+
+
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -40,6 +43,21 @@ fun MainProgressScreen(
                         text = uiState.user?.name ?: "Loading...",
                         fontWeight = FontWeight.Bold
                     )
+                },
+                actions = {
+                    IconButton(onClick = {
+                        viewModel.logout()
+                        navController.navigate(Screen.Login.route) {
+                            popUpTo("login") {
+                                inclusive = true
+                            }
+                        }
+                    }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Default.ExitToApp,
+                            contentDescription = "Log out"
+                        )
+                    }
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primary,
