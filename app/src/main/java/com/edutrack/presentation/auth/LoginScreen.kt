@@ -1,17 +1,25 @@
 package com.edutrack.presentation.auth
 
+import android.app.Activity
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.edutrack.presentation.navigation.Screen
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInStatusCodes
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun LoginScreen(
@@ -20,17 +28,32 @@ fun LoginScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val loginResult by viewModel.loginResult.collectAsState()
+    val context = LocalContext.current
+
+    val googleSignInLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            viewModel.handleGoogleSignInResult(result.data)
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.googleSignInIntent.collectLatest { intentEvent ->
+            googleSignInLauncher.launch(intentEvent.intent)
+        }
+    }
 
     LaunchedEffect(loginResult) {
         when (loginResult) {
             is LoginResult.Success -> {
                 val authData = (loginResult as LoginResult.Success).authData
-                // Сохраняем токен и переходим на главный экран
                 navController.navigate(Screen.Progress.createRoute(authData.token)) {
                     popUpTo(Screen.Login.route) { inclusive = true }
                 }
                 viewModel.clearResult()
             }
+
             else -> {}
         }
     }
@@ -100,13 +123,41 @@ fun LoginScreen(
                 Text("Login")
             }
         }
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Text(
+            text = "or",
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Button(
+            onClick = { viewModel.startGoogleSignIn() },
+            modifier = Modifier.fillMaxWidth(),
+            enabled = !uiState.isLoading,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(0xFF4285F4),
+                contentColor = Color.White
+            )
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                // Можно добавить иконку Google
+                Text("Continue with Google")
+            }
+        }
 
         if (loginResult is LoginResult.Error) {
             Spacer(modifier = Modifier.height(16.dp))
             Text(
                 text = (loginResult as LoginResult.Error).message,
-                color = MaterialTheme.colorScheme.error
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall
             )
         }
     }
+
 }

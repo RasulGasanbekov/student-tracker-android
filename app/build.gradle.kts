@@ -7,13 +7,13 @@ plugins {
 }
 
 android {
-    namespace = "com.example.edutrack"
+    namespace = "com.edutrack"
     compileSdk {
         version = release(36)
     }
 
     defaultConfig {
-        applicationId = "com.example.edutrack"
+        applicationId = "com.edutrack"
         minSdk = 24
         targetSdk = 36
         versionCode = 1
@@ -53,6 +53,7 @@ dependencies {
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.ui.graphics)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -72,7 +73,7 @@ dependencies {
     // Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2")
 
-    // Google Sign-In (для будущей реализации)
+    // Google Sign-In
     implementation("com.google.android.gms:play-services-auth:21.4.0")
 
 
